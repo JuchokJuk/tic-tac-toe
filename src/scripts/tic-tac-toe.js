@@ -8,6 +8,13 @@ class TicTacToe {
     state = '';
 
     constructor(width, height, needToWin) {
+        if(width <= 0 || height <= 0){
+            throw new Error('Invalid field size')
+        }
+        if(needToWin <= 0){
+            throw new Error('Invalid needToWin')
+        }
+        
         this.width = width;
         this.height = height;
         this.needToWin = needToWin;
@@ -19,6 +26,7 @@ class TicTacToe {
             }
         }
     }
+
     clearField() {
         for (let x = 0; x < this.width; x++) {
             for (let y = 0; y < this.height; y++) {
@@ -26,6 +34,7 @@ class TicTacToe {
             }
         }
     }
+
     newGame() {
         this.clearField();
         this.player = 'O';
@@ -33,20 +42,33 @@ class TicTacToe {
         this.state = '';
     }
 
-    takePosition(x, y) {
-        if (this.field[x][y] === undefined && this.state === '') {
-            this.player = this.player === 'X' ? "O" : "X";
-            this.field[x][y] = this.player;
-            this.step++;
-
-            if (this.checkWinner(this.player, x, y)) {
-                this.state = `${this.player} won`;
-            } else if (this.step === this.width * this.height) {
-                this.state = 'Dead heat';
-            }
-            return { success: true, gameResult: this.state }
+    getMainDiagonalCoordinates(x, y, i) {
+        return {
+            x: x - (this.needToWin - 1) + i,
+            y: y - (this.needToWin - 1) + i
         }
-        return { success: false, gameResult: this.state }
+    }
+    
+    getSideDiagonalCoordinates(x, y, i) {
+
+        return {
+            x: x + (this.needToWin - 1) - i,
+            y: y - (this.needToWin - 1) + i
+        }
+    }
+
+    getVerticalCoordinates(x, y, i) {
+        return {
+            x: x,
+            y: y - (this.needToWin - 1) + i
+        }
+    }
+
+    getHorizontalCoordinates(x, y, i) {
+        return {
+            x: x - (this.needToWin - 1) + i,
+            y: y
+        }
     }
 
     checkWinner(player, x, y) {
@@ -66,7 +88,7 @@ class TicTacToe {
                 if (fieldX >= 0 && fieldX < this.width && fieldY >= 0 && fieldY < this.height) {
                     if (this.field[fieldX][fieldY] === player) {
                         count++;
-                        if (count >= this.needToWin) {
+                        if (count === this.needToWin) {
                             return true;
                         }
                     } else {
@@ -78,29 +100,20 @@ class TicTacToe {
         return false;
     }
 
-    getMainDiagonalCoordinates(x, y, i) {
-        return {
-            x: x - (this.needToWin - 1) + i,
-            y: y - (this.needToWin - 1) + i
-        }
-    }
-    getSideDiagonalCoordinates(x, y, i) {
+    takePosition(x, y) {
+        if (this.field[x][y] === undefined && this.state === '') {
+            this.player = this.player === 'X' ? "O" : "X";
+            this.field[x][y] = this.player;
+            this.step++;
 
-        return {
-            x: x + (this.needToWin - 1) - i,
-            y: y - (this.needToWin - 1) + i
+            if (this.checkWinner(this.player, x, y)) {
+                this.state = `${this.player} won`;
+            } else if (this.step === this.width * this.height) {
+                this.state = 'Dead heat';
+            }
+            return { success: true, gameResult: this.state }
         }
+        return { success: false, gameResult: this.state }
     }
-    getVerticalCoordinates(x, y, i) {
-        return {
-            x: x,
-            y: y - (this.needToWin - 1) + i
-        }
-    }
-    getHorizontalCoordinates(x, y, i) {
-        return {
-            x: x - (this.needToWin - 1) + i,
-            y: y
-        }
-    }
+
 }

@@ -1,4 +1,4 @@
-let ticTacToe = new TicTacToe(3, 3, 3);
+let ticTacToe = new TicTacToe(10, 10, 5);
 
 let field = document.getElementById("field");
 let cells = document.getElementsByClassName("cell");
